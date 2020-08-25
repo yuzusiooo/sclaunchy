@@ -1,0 +1,3 @@
+URLexample;;urltoexampleshortcut;;web;;
+SCexample;;directorytoexecutable;;sc;;
+Folderexample;;directorytofolder;;dir;;
