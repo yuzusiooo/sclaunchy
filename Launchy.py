@@ -4,6 +4,7 @@
 #8/10 can launch web pages and directory
 #opening directories still doesnt work
 #8/22 sorted listnames and multiple shortcuts with the same name now works
+#8/31 will now detect if system is running windows or linux, opens files depending on the system accordingly
 
 import subprocess
 import webbrowser
@@ -11,11 +12,12 @@ import os
 import sys
 
 runProg = 1
-print ("************************")
+print ("*******************************************************")
 print ("Launchy")
+print ("@Yuzusiooooo")
 print ()
 print ("Enter shortcut name, or comlist for list of commands")
-print ("************************")
+print ("*******************************************************")
 
 usemode = 0;
 
@@ -61,24 +63,23 @@ while runProg == 1:
 
 # command list
     elif launchyInput == "comlist":
-        print ("comlist")
-        print ("-Lists this list of commands")
-
-        print ()
         print ("addsc")
         print ("-Add a new shortcut")
+
+        print ("comlist")
+        print ("-Lists this list of commands")
 
         print ("listnames")
         print ("-Lists all available shortcut names")
 
         print ("usemode")
         print ("-Returns usemode")
-
 # adding shortcuts
     elif launchyInput == "addsc":
         usemode = 1;
         while usemode == 1:
-            print ("Enter new shortcut name, or quit to cancel: ")
+            print ("Enter new shortcut name, or quit to cancel")
+            print (">>")
             newscName = input ()
             if newscName == "quit":
                 break
@@ -100,17 +101,21 @@ while runProg == 1:
                 print ("1 - File shortcut (.exe, .png, etc)")
                 print ("2 - Web shortcut (URL)")
                 print ("3 - Directory shortcut (Opens file manager)")
+                print (">>")
                 newscType = int (input ())
                 
                 if not((newscType > 3) or (newscType == 0)):
                     if newscType == 1:
                         print ("Enter file directory")
+                        print (">>")
                         newscDir = input()                            
                     if newscType == 2:
                         print ("Enter URL")
+                        print (">>")
                         newscDir = input()                            
                     if newscType == 3:
                         print ("Enter folder directory")
+                        print (">>")
                         newscDir = input()
 
                 nmdrList.close()
@@ -118,15 +123,16 @@ while runProg == 1:
                 print ("Add this shortcut [y, n]?")
                 print (newscName)
                 print (newscDir)
-                print (scTypeDesc[newscType])                        
+                print (scTypeDesc[newscType])
+                print (">>")
                 yesno = input()
                     
                 if yesno == "y":
                     with open('LaunchyDir.txt','a') as nmdrList:
-                        nmdrList.write("\n")
                         scTypeTag = ["--","sc","web","dir"]
                     
                         newscEntry = (newscName + ";;" + newscDir + ";;" + scTypeTag[newscType] + ";;")
+                        nmdrList.write("")
                         nmdrList.write (newscEntry)
                     
                         print ("Added shortcut")
@@ -219,25 +225,41 @@ while runProg == 1:
                         curLineName = curLine[0]
                         curLineDir = curLine[1]
                         whatsCurLine = curLine[2]
+                        
                         if (inputResult[multiResInput] == curLineName):
+                            
                             if (whatsCurLine == "sc"):
-                                print ("Launching "+curLineName)
-                                print (curLineDir)
-                                subprocess.Popen ([curLineDir], shell = True)
-                                break
+                                if (sys.platform == "win32"):
+                                    print ("Launching "+curLineName)
+                                    print (curLineDir)
+                                    subprocess.Popen ([curLineDir], shell = True)
+                                    break
+                                if (sys.platform == "linux"):
+                                    openscLine = "xdg-open "+ (curLineDir)
+                                    print (openscLine)
+                                    os.system (openscLine)
+                                    break
+                                
                             if (whatsCurLine == "web"):
                                 print ("Accessing "+curLineName)
                                 print (curLineDir)
                                 webbrowser.open(curLineDir)
                                 break
+                                    
                             if (whatsCurLine == "dir"):
-                                print ("Opening " + curLineName)
-                                print (curLineDir)
-                                openingDir = "explorer "+curLineDir
-                                os.startfile(curLineDir)
-                                break
+                                if (sys.platform == "win32"):
+                                    print ("Opening  "+curLineName)
+                                    print (curLineDir)
+                                    openingDir = "explorer "+curLineDir
+                                    os.startfile (curLineDir)
+                                    break
+                                if (sys.platform == "linux"):
+                                    opendirLine = "xdg-open "+ (curLineDir)
+                                    print (openDirLine)
+                                    os.system (opendirLine)
+                                    break
             else:
-                print ("Invalid input 2")                
+                print ("Invalid Input 2: No shortcut or command with that name exists")                
                     
     else:
-        print ("Invalid Input 1")
+        print ("Invalid Input 1: Enter something!")
