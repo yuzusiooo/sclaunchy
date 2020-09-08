@@ -8,7 +8,7 @@
 import subprocess
 import webbrowser
 import os
-from tkinter import filedialog
+import sys
 
 runProg = 1
 print ("************************")
@@ -53,6 +53,11 @@ while runProg == 1:
         openingDir = "explorer ."
         webbrowser.open(openingDir)
         print ("Openinig Launchy Directory")
+
+# list OS type
+    elif launchyInput == "whatOS":
+        thisOS = sys.platform
+        print (thisOS)
 
 # command list
     elif launchyInput == "comlist":
@@ -165,7 +170,16 @@ while runProg == 1:
                             if (whatsCurLine == "sc"):
                                 print ("Launching "+curLineName)
                                 print (curLineDir)
-                                subprocess.Popen ([curLineDir], shell = True)
+                                
+                                #check if linux or windows
+                                if (sys.platform == 'win32'):
+                                    subprocess.Popen ([curLineDir], shell = True)
+                                    break
+                                if (sys.platform == 'linux'):
+                                    openscLine = "xdg-open "+ (curLineDir)
+                                    print (openscLine)
+                                    os.system (openscLine)
+                                    break
                                 break
                             if (whatsCurLine == "web"):
                                 print ("Accessing "+curLineName)
@@ -175,10 +189,17 @@ while runProg == 1:
                             if (whatsCurLine == "dir"):
                                 print ("Opening " + curLineName)
                                 print (curLineDir)
-                                openingDir = "explorer "+curLineDir
-                                os.startfile(curLineDir)
+                                if (sys.platform == 'win32'):
+                                    openingDir = "explorer "+curLineDir
+                                    os.startfile(curLineDir)
+                                    break
+                                if (sys.platform == 'linux'):
+                                    opendirLine = "xdg-open "+(curLineDir)
+                                    print (opendirLine)
+                                    os.system (opendirLine)
+                                    break
                                 break
-                        
+
             ## open shortcut when theres multiple result
             elif (len(inputResult) > 1):
                 print ("Found multiple shortcuts, launch which one?")
